@@ -16,6 +16,7 @@ function draw(){
 console.log(size)
   background(180);
   cube.display();
+  text(melange, 900, 200)
 }
 
 const couleur = ['y','y','y','b','b','b','w','w','w','g','g','g','y','y','b','b','w','w','g','g','y','y','y','b','b','b','w','w','w','g','g','g','r','r','r','r','r','r','r','r','o','o','o','o','o','o','o','o']
@@ -27,7 +28,11 @@ const fW = [6,7,8,16,17,26,27,28];
 const fY = [0,1,2,12,13,20,21,22];
 const fB = [3,4,5,15,25,24,23,14];
 const fG = [9,18,29,30,31,19,11,10];
+
+const moves = ["U", "D", "R", "L", "F", "B","U*", "D*", "R*", "L*", "F*", "B*"]
 const centerCouleur =   ['y', 'b', "w", "g", 'r', 'o'];
+
+let melange = "";
 let cube = {
   cases : [],
   centres : [],
@@ -96,7 +101,7 @@ let cube = {
       rect(this.cases[i].x*size + size/2, this.cases[i].y*size +size*3, size, size );
       fill(0)
       textAlign(CENTER)
-      text(this.cases[i].p, this.cases[i].x*size +size /2+size/2, this.cases[i].y*size +size/1.5+size*3)
+      //text(this.cases[i].p, this.cases[i].x*size +size /2+size/2, this.cases[i].y*size +size/1.5+size*3)
     }
   },
 
@@ -315,11 +320,21 @@ let cube = {
         this.move("B")
       }
     }
+  },
+
+  mix : function(){
+    melange = "";
+    for(let i = 0 ; i < 10 ; i++){
+      let s = moves[getRandomInt(12)];
+      this.move(s)
+      melange += s + "  "
+    }
+    console.log(melange)
   }
 }
 
-let buttons = {
-  
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
 }
 
 function giveCenterX(cNumber){
