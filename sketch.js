@@ -20,6 +20,8 @@ console.log(size)
 }
 
 const couleur = ['y','y','y','b','b','b','w','w','w','g','g','g','y','y','b','b','w','w','g','g','y','y','y','b','b','b','w','w','w','g','g','g','r','r','r','r','r','r','r','r','o','o','o','o','o','o','o','o']
+const U = [0,1,2,3,4,5,6,7,8,9,10,11]
+const D = [31,30,29,28,27,26,25,24,23,22,21,20];
 const R = [34,36,39,5,15,25,42,44,47,29,18,9]
 const L = [45,43,40,23,14,3,37,35,32,11,19,31]
 const F = [2,13,22,40,41,42,26,16,6,39,38,37]
@@ -28,6 +30,8 @@ const fW = [6,7,8,16,17,26,27,28];
 const fY = [0,1,2,12,13,20,21,22];
 const fB = [3,4,5,15,25,24,23,14];
 const fG = [9,18,29,30,31,19,11,10];
+const fO = [40,41,42,44,47,46,45,44];
+const fR = [32,33,34,36,39,38,37,35];
 
 const moves = ["U", "D", "R", "L", "F", "B","U*", "D*", "R*", "L*", "F*", "B*"]
 const centerCouleur =   ['y', 'b', "w", "g", 'r', 'o'];
@@ -101,224 +105,76 @@ let cube = {
       rect(this.cases[i].x*size + size/2, this.cases[i].y*size +size*3, size, size );
       fill(0)
       textAlign(CENTER)
-      //text(this.cases[i].p, this.cases[i].x*size +size /2+size/2, this.cases[i].y*size +size/1.5+size*3)
+      text(this.cases[i].p, this.cases[i].x*size +size /2+size/2, this.cases[i].y*size +size/1.5+size*3)
     }
   },
 
   move : function(move){
-    let sylo = [];
-    if(move === "U"){
-      for(let i = 0 ; i < 12 ; i++){
-        if(i+3 < 12){
-          if(i < 3){
-            sylo.push(this.cases[i]);
-          }
-          this.cases[i] = this.cases[i+3];
-        }
-        else if (i < 12){
-          this.cases[i] = sylo[i-9];
-        }
-        this.cases[i].x = giveX(i);
-        this.cases[i].y = giveY(i);
-      }
-      sylo.push(this.cases[39]);
-      sylo.push(this.cases[36]);
-      this.cases[39] = this.cases[34];
-      this.cases[36] = this.cases[33];
-      this.cases[34] = this.cases[32];
-      this.cases[33] = this.cases[35];
-      this.cases[32] = this.cases[37];
-      this.cases[35] = this.cases[38];
-      this.cases[37] = sylo[3];
-      this.cases[38] = sylo[4];
-      for(let i = 32 ; i < 40 ; i++){
-        this.cases[i].x = giveX(i);
-        this.cases[i].y = giveY(i);
+    let m = [];
+    let f = [];
+    if(move === "U" || move === "U*"){
+      m = U;
+      f = fR;
+    }
+    else if(move === "D" || move === "D*"){
+      m = D;
+      f = fO;
+    }
+    else if(move === "R" || move === "R*"){
+      m = R;
+      f = fW;
+    }
+    else if(move === "L" || move === "L*"){
+      m = L;
+      f = fY;
+    }
+    else if(move === "F" || move === "F*"){
+      m = F;
+      f = fB;
+    }
+    else if(move === "B" || move === "B*"){
+      m = B;
+      f = fG;
+    }
+    if(move.length == 2){
+      for(let i = 0 ; i < 3 ; i++){
+        this.finalMove(m,f)
       }
     }
-    else if(move === "D"){
-      for(let i = 31 ; i > 19 ; i--){
-        if(i > 22){
-          if(i > 28){
-            sylo.push(this.cases[i]);
-          }
-          this.cases[i] = this.cases[i-3];
-        }
-        else {
-          console.log(sylo, 22-i)
-          this.cases[i] = sylo[22-i]
-        }
-        this.cases[i].x = giveX(i);
-        this.cases[i].y = giveY(i);
-      }
-      sylo.push(this.cases[47]);
-      sylo.push(this.cases[44]);
-      this.cases[47] = this.cases[42];
-      this.cases[42] = this.cases[40];
-      this.cases[40] = this.cases[45];
-      this.cases[44] = this.cases[41];
-      this.cases[41] = this.cases[43];
-      this.cases[43] = this.cases[46];
-      this.cases[46] = sylo[4]
-      this.cases[45] = sylo[3]
+    else if(move.length === 1){
+      this.finalMove(m,f);
+    }
+  },
 
-      for(let i = 40 ; i < 48 ; i++){
-        this.cases[i].x = giveX(i);
-        this.cases[i].y = giveY(i);
+  finalMove : function(move, face){
+    let sylo = [];
+    for(let i = 0 ; i < 12 ; i++){
+      if(i+3 < 12){
+        if(i < 3){
+          sylo.push(this.cases[move[i]]);
+        }
+      this.cases[move[i]] = this.cases[move[i+3]];
       }
+      else {
+        this.cases[move[i]] = sylo[i-9];
+      }
+      this.cases[move[i]].x = giveX(move[i]);
+      this.cases[move[i]].y = giveY(move[i]);
     }
-    else if(move === "R"){
-      let sylo = [];
-      for(let i = 0 ; i < 12 ; i++){
-        if(i+3 < 12){
-          if(i < 3){
-            sylo.push(this.cases[R[i]]);
-          }
-        this.cases[R[i]] = this.cases[R[i+3]];
-        }
-        else {
-          this.cases[R[i]] = sylo[i-9];
-        }
-        this.cases[R[i]].x = giveX(R[i]);
-        this.cases[R[i]].y = giveY(R[i]);
+    sylo.push(this.cases[face[7]])
+    sylo.push(this.cases[face[6]])
+    for(let i = 7 ; i >= 0 ; i--){
+      if(i === 1){
+        this.cases[face[i]] = sylo[3]
       }
-      sylo.push(this.cases[6]);
-      sylo.push(this.cases[7]);
-      this.cases[6] = this.cases[26];
-      this.cases[7] = this.cases[16];
-      this.cases[16] = this.cases[27];
-      this.cases[27] = this.cases[17];
-      this.cases[26] = this.cases[28];
-      this.cases[28] = this.cases[8];
-      this.cases[8] = sylo[3];
-      this.cases[17] = sylo[4];
-      for(let i = 0 ; i < 8 ; i++){
-        console.log(fW[i],i)
-        this.cases[fW[i]].x = giveX(fW[i]);
-        this.cases[fW[i]].y = giveY(fW[i]);
+      else if(i===0){
+        this.cases[face[i]] = sylo[4]
       }
-    }
-    else if(move === "L"){
-      let sylo = [];
-      for(let i = 0 ; i < 12 ; i++){
-        if(i+3 < 12){
-          if(i < 3){
-            sylo.push(this.cases[L[i]]);
-          }
-        this.cases[L[i]] = this.cases[L[i+3]];
-        }
-        else {
-          this.cases[L[i]] = sylo[i-9];
-        }
-        this.cases[L[i]].x = giveX(L[i]);
-        this.cases[L[i]].y = giveY(L[i]);
+      else{
+        this.cases[face[i]] = this.cases[face[i - 2]];
       }
-      sylo.push(this.cases[2]);
-      sylo.push(this.cases[1]);
-      this.cases[2] = this.cases[0];
-      this.cases[0] = this.cases[20];
-      this.cases[20] = this.cases[22];
-      this.cases[22] = sylo[3];
-      this.cases[1] = this.cases[12];
-      this.cases[12] = this.cases[21];
-      this.cases[21] = this.cases[13];
-      this.cases[13] = sylo[4];
-      for(let i = 0 ; i < 8 ; i++){
-        this.cases[fY[i]].x = giveX(fY[i]);
-        this.cases[fY[i]].y = giveY(fY[i]);
-      }
-    }
-    else if(move === "F"){ 
-      let sylo = [];
-      for(let i = 0 ; i < 12 ; i++){
-        if(i+3 < 12){
-          if(i < 3){
-            sylo.push(this.cases[F[i]]);
-          }
-        this.cases[F[i]] = this.cases[F[i+3]];
-        }
-        else {
-          this.cases[F[i]] = sylo[i-9];
-        }
-        this.cases[F[i]].x = giveX(F[i]);
-        this.cases[F[i]].y = giveY(F[i]);
-      }
-      sylo.push(this.cases[fB[7]])
-      sylo.push(this.cases[fB[6]])
-      for(let i = 7 ; i >= 0 ; i--){
-        if(i === 1){
-          this.cases[fB[i]] = sylo[3]
-        }
-        else if(i===0){
-          this.cases[fB[i]] = sylo[4]
-        }
-        else{
-          this.cases[fB[i]] = this.cases[fB[i - 2]];
-        }
-        this.cases[fB[i]].x = giveX(fB[i])
-        this.cases[fB[i]].y = giveY([fB[i]])
-      }
-    }
-    else if(move === "B"){ // a finir
-      let sylo = [];
-      for(let i = 0 ; i < 12 ; i++){
-        if(i+3 < 12){
-          if(i < 3){
-            sylo.push(this.cases[B[i]]);
-          }
-        this.cases[B[i]] = this.cases[B[i+3]];
-        }
-        else {
-          this.cases[B[i]] = sylo[i-9];
-        }
-        this.cases[B[i]].x = giveX(B[i]);
-        this.cases[B[i]].y = giveY(B[i]);
-      }
-      sylo.push(this.cases[fG[7]])
-      sylo.push(this.cases[fG[6]])
-      for(let i = 7 ; i >= 0 ; i--){
-        if(i === 1){
-          this.cases[fG[i]] = sylo[3]
-        }
-        else if(i===0){
-          this.cases[fG[i]] = sylo[4]
-        }
-        else{
-          this.cases[fG[i]] = this.cases[fG[i - 2]];
-        }
-        this.cases[fG[i]].x = giveX(fG[i])
-        this.cases[fG[i]].y = giveY([fG[i]])
-      }
-    }
-    else if(move==="U*"){
-      for(let i = 0 ; i < 3 ; i++){
-        this.move("U")
-      }
-    }
-    else if(move==="D*"){
-      for(let i = 0 ; i < 3 ; i++){
-        this.move("D")
-      }
-    }
-    else if(move==="R*"){
-      for(let i = 0 ; i < 3 ; i++){
-        this.move("R")
-      }
-    }
-    else if(move==="L*"){
-      for(let i = 0 ; i < 3 ; i++){
-        this.move("L")
-      }
-    }
-    else if(move==="F*"){
-      for(let i = 0 ; i < 3 ; i++){
-        this.move("F")
-      }
-    }
-    else if(move==="B*"){
-      for(let i = 0 ; i < 3 ; i++){
-        this.move("B")
-      }
+      this.cases[face[i]].x = giveX(face[i])
+      this.cases[face[i]].y = giveY([face[i]])
     }
   },
 
